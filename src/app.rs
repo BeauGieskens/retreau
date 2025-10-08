@@ -5,7 +5,7 @@ use leptos_router::{
     StaticSegment,
 };
 
-use crate::components::show_data_from_api::ShowDataFromApi;
+use crate::components::{homepage::HomePage, navbar::Navbar};
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
@@ -17,6 +17,12 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
                 <AutoReload options=options.clone() />
                 <HydrationScripts options />
                 <MetaTags />
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+                <link
+                    href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Pacifico&display=swap"
+                    rel="stylesheet"
+                />
             </head>
             <body>
                 <App />
@@ -34,22 +40,13 @@ pub fn App() -> impl IntoView {
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
         <Stylesheet id="leptos" href="/pkg/retreau.css" />
-
-        // content for this welcome page
         <Router>
+            <Navbar />
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
                     <Route path=StaticSegment("") view=HomePage />
                 </Routes>
             </main>
         </Router>
-    }
-}
-
-#[component]
-fn HomePage() -> impl IntoView {
-    view! {
-        <h1>"Hello world!"</h1>
-        <ShowDataFromApi />
     }
 }

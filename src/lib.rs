@@ -1,10 +1,10 @@
+pub mod app;
+mod components;
+
 #[cfg(feature = "ssr")]
 use worker::*;
 
 pub use crate::app::*;
-
-pub mod app;
-mod components;
 
 #[cfg(feature = "ssr")]
 pub fn register_server_functions() {

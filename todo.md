@@ -1,0 +1,3 @@
+- Board card
+  - Bottom left team name
+- Pull avatars from OIDC, else Gravatar

@@ -1,0 +1,25 @@
+.hero {
+    color: var(--color-text-secondary);
+    font-family: "Pacifico", cursive;
+    font-size: 2rem;
+    width: 100%;
+    max-width: var(--widescreen);
+    text-align: center;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: repeat(3, var(--column-width));
+    gap: var(--column-gap);
+
+    @media screen and (max-width: 1440px) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.column {
+    .title {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+}

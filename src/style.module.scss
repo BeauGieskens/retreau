@@ -1,0 +1,22 @@
+:root {
+    --color-bg: #1e1e1e;
+    --color-surface: #2a2a2a;
+    --color-surface-hover: #333;
+    --color-border: #666;
+    --color-text: #ddd;
+    --color-accent: #3a7bd5;
+
+    --column-width: 26rem;
+    --column-gap: 5rem;
+    --widescreen: 1440px;
+}
+
+body {
+    margin: 0;
+    font-family: "Manrope", "Helvetica Neue", "Arial", sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    padding: 1rem;
+    padding-top: 0.75rem;
+    padding-left: 1.5rem;
+}
