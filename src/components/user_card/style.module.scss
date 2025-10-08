@@ -1,0 +1,29 @@
+.user-card {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    .avatar {
+        width: 2rem;
+        height: 2rem;
+        border: 1px solid var(--color-border);
+        border-radius: 50%;
+        background: transparent;
+
+        margin-right: 0.75rem;
+    }
+
+    .details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .name {
+        font-size: 0.95rem;
+    }
+
+    .role {
+        font-size: 0.75rem;
+        color: var(--color-border);
+    }
+}

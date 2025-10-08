@@ -3,7 +3,11 @@ main = "build/worker/shim.mjs"
 compatibility_date = "2025-06-17"
 
 [build]
-command = "cargo leptos build --release && LEPTOS_OUTPUT_NAME=retreau worker-build --release --features ssr"
+command = """\
+stylance . --output-file ./style/bundled.scss && \
+cargo leptos build --release && \
+LEPTOS_OUTPUT_NAME=retreau worker-build --release --features ssr
+"""
 
 [assets]
 directory = "./target/site"

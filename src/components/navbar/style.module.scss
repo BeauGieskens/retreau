@@ -1,0 +1,46 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    .left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .link {
+        text-decoration: none;
+        color: var(--color-text-secondary);
+        align-self: baseline;
+
+        &:hover {
+            color: var(--color-accent);
+        }
+    }
+
+    .brand {
+        color: var(--color-text);
+        font-family: "Pacifico", cursive;
+        font-size: 1.25rem;
+        padding-right: 1rem;
+    }
+
+    .right {
+        display: flex;
+        align-items: center;
+    }
+
+    .avatar {
+        width: 3rem;
+        height: 3rem;
+        border: 2px solid var(--color-border);
+        border-radius: 50%;
+        background: transparent;
+
+        &:hover {
+            border-color: var(--color-accent);
+        }
+    }
+}
