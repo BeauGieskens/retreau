@@ -1,3 +1,18 @@
 - Board card
   - Bottom left team name
 - Pull avatars from OIDC, else Gravatar
+- Force user to pick an emoji for every thought
+  - Should be a small selection based on the column:
+    - went well: 🎉 👏 😁 😌 🫡
+    - to improve: 🤔 😶 😕 😞 😳
+    - action: ✅ 📅 ✉️ ✍️ 👉
+- The dream board creation experience:
+  - Centre screen very large input "What are you retrospecting?"
+  - Need a little hint that you should press enter when done
+  - Backend has already created a board and is waiting for the name
+  - When enter is pressed, turn the input into text and animate it into the h2 where it's supposed to go
+  - While that animation happens the other UI elements fade in
+  - Then we're ready to go
+- Allow editing of board name after creation in a way that looks nice
+- Add an actual boards page
+- Add an actual about page

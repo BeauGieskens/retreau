@@ -1,18 +1,14 @@
 use leptos::prelude::*;
-use stylance::{classes, import_crate_style, import_style};
+use leptos_router::components::A;
+use stylance::{classes, import_style};
 
-import_crate_style!(
-    #[allow(dead_code)]
-    shared,
-    "src/style.module.scss"
-);
 import_style!(style, "style.module.scss");
 
 #[component]
 pub fn BoardCard(
-    /// Whether this card should be styled as primary.
-    #[prop(optional)]
-    primary: bool,
+    /// ID of the board.
+    #[prop(into)]
+    id: String,
     /// Name to display in the middle of the card.
     #[prop(into)]
     name: String,
@@ -20,16 +16,19 @@ pub fn BoardCard(
     #[prop(into, optional)]
     timestamp: Option<String>, // TODO: make it an actual timestamp?
 ) -> impl IntoView {
+    let new = id == "new";
+    let timestamp = if let Some(timestamp) = timestamp {
+        view! { <div class=style::meta>{timestamp.to_string()}</div> }.into_any()
+    } else {
+        ().into_any()
+    };
+
     view! {
-        <div class=classes!(style::board_card, primary.then_some(style::primary))>
-            <div class=style::title>{name}</div>
-            {move || {
-                if let Some(timestamp) = &timestamp {
-                    view! { <div class=style::meta>{timestamp.to_string()}</div> }.into_any()
-                } else {
-                    ().into_any()
-                }
-            }}
-        </div>
+        <A href="/boards/new" {..}>
+            <div class=classes!(style::board_card, new.then_some(style::primary))>
+                <div class=style::title>{name}</div>
+                {timestamp}
+            </div>
+        </A>
     }
 }

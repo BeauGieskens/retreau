@@ -1,19 +1,20 @@
 .hero {
-    color: var(--color-text-secondary);
+    color: var(--color-text);
     font-family: "Pacifico", cursive;
     font-size: 2rem;
     width: 100%;
-    max-width: var(--widescreen);
+    max-width: var(--home-widescreen);
     text-align: center;
 }
 
 .layout {
     display: grid;
-    grid-template-columns: repeat(3, var(--column-width));
+    grid-template-columns: repeat(3, var(--home-column-width));
     gap: var(--column-gap);
 
     @media screen and (max-width: 1440px) {
         grid-template-columns: repeat(3, 1fr);
+        width: 100%;
     }
 }
 

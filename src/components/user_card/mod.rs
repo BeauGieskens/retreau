@@ -1,11 +1,6 @@
 use leptos::prelude::*;
-use stylance::{import_crate_style, import_style};
+use stylance::import_style;
 
-import_crate_style!(
-    #[allow(dead_code)]
-    shared,
-    "src/style.module.scss"
-);
 import_style!(style, "style.module.scss");
 
 #[component]

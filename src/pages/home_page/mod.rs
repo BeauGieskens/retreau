@@ -1,13 +1,8 @@
 use leptos::prelude::*;
-use stylance::{import_crate_style, import_style};
+use stylance::import_style;
 
 use crate::components::{BoardCard, UserCard};
 
-import_crate_style!(
-    #[allow(dead_code)]
-    shared,
-    "src/style.module.scss"
-);
 import_style!(style, "style.module.scss");
 
 #[component]
@@ -19,14 +14,14 @@ pub fn HomePage() -> impl IntoView {
         <div class=style::layout>
             <section class=style::column>
                 <h2 class=style::title>Start retrospecting</h2>
-                <BoardCard primary=true name="New Board" />
+                <BoardCard id="new" name="New Board" />
             </section>
 
             <section class=style::column>
                 <h2 class=style::title>Recent</h2>
-                <BoardCard name="Sprint 123" timestamp="3 days ago" />
-                <BoardCard name="Sprint 122" timestamp="a month ago" />
-                <BoardCard name="Sprint 121" timestamp="2 months ago" />
+                <BoardCard id="new" name="Sprint 123" timestamp="3 days ago" />
+                <BoardCard id="new" name="Sprint 122" timestamp="a month ago" />
+                <BoardCard id="new" name="Sprint 121" timestamp="2 months ago" />
             </section>
 
             <section class=style::column>

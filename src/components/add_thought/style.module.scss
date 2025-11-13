@@ -1,0 +1,26 @@
+.add-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.add {
+    align-self: flex-end;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition:
+        background 0.2s,
+        transform 0.1s;
+}
+
+.add:hover {
+    background: var(--color-surface-hover);
+}
+
+.add:active {
+    transform: scale(0.95);
+}
