@@ -22,11 +22,14 @@ optional = true
 version = "0.1"
 
 [dependencies.getrandom]
+# need to enable the wasm_js feature for something downstream
+# but it needs to be 0.3 specifically
 version = "0.3"
 features = ["wasm_js"]
 
 [dependencies.leptos]
 version = "0.8"
+features = ["nightly"]
 
 [dependencies.leptos_axum]
 version = "0.8"
@@ -50,7 +53,7 @@ version = "0.3"
 version = "0.2"
 
 [dependencies.worker]
-version = "0.6"
+version = "0.7"
 features = ["http", "axum", "d1"]
 optional = true
 

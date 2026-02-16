@@ -58,3 +58,46 @@ pub fn hydrate() {
     console_error_panic_hook::set_once();
     leptos::mount::hydrate_body(App);
 }
+
+#[cfg(feature = "ssr")]
+#[durable_object(alarm)]
+pub struct Batcher {
+    state: State,
+    env: Env,
+}
+
+#[cfg(feature = "ssr")]
+impl DurableObject for Batcher {
+    fn new(state: State, env: Env) -> Self {
+        Self {
+            state,
+            env,
+        }
+    }
+
+    async fn fetch(&self, _req: Request) -> Result<Response> {
+        Response::ok("Durable Object Batcher endpoint")
+    }
+}
+
+#[cfg(feature = "ssr")]
+#[durable_object]
+pub struct Board {
+    state: State,
+    env: Env,
+}
+
+#[cfg(feature = "ssr")]
+impl DurableObject for Board {
+    fn new(state: State, env: Env) -> Self {
+        Self {
+            state,
+            env,
+        }
+    }
+
+    async fn fetch(&self, _req: Request) -> Result<Response> {
+        // Handle WebSocket connections here
+        Response::ok("Durable Object WebSocket endpoint")
+    }
+}

@@ -1,6 +1,6 @@
 name = "retreau"
 main = "build/worker/shim.mjs"
-compatibility_date = "2025-06-17"
+compatibility_date = "2025-12-13"
 
 [build]
 command = """\
@@ -11,3 +11,18 @@ LEPTOS_OUTPUT_NAME=retreau worker-build --release --features ssr
 
 [assets]
 directory = "./target/site"
+
+[[d1_databases]]
+binding = "retreau"
+database_name = "retreau"
+database_id = "a8c6b96a-ffc0-4c84-aa66-fc88c301ee40"
+
+[durable_objects]
+bindings = [
+  { name = "batcher", class_name = "Batcher" },
+  { name = "boards", class_name = "Board" },
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["Batcher", "Board"]

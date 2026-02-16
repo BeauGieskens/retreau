@@ -21,7 +21,7 @@ pub fn ShowDataFromApi() -> impl IntoView {
     view! {
         <div>
             <button on:click=on_click>"What does the API say?"</button>
-            <p>{value}</p>
+            <p>{value.get()}</p>
         </div>
     }
 }
