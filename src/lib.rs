@@ -1,11 +1,33 @@
 pub mod app;
 mod components;
+#[cfg(feature = "ssr")]
+mod durable_objects;
 mod pages;
+mod rkyv;
 
+#[cfg(feature = "ssr")]
+use std::sync::Arc;
+
+#[cfg(feature = "ssr")]
+pub use durable_objects::Board;
+#[cfg(feature = "ssr")]
+use leptos::prelude::ServerFnError;
 #[cfg(feature = "ssr")]
 use worker::*;
 
 pub use crate::app::*;
+
+pub(crate) static DB_NAME: &str = "retreau";
+
+#[cfg(feature = "ssr")]
+pub(crate) async fn get_worker_env() -> Result<Arc<Env>, ServerFnError> {
+    use axum::Extension;
+    use leptos_axum::extract;
+    use worker::Env;
+
+    let env: Extension<Arc<Env>> = extract().await?;
+    Ok(env.0)
+}
 
 #[cfg(feature = "ssr")]
 pub fn register_server_functions() {
@@ -17,11 +39,9 @@ pub fn register_server_functions() {
 
 #[cfg(feature = "ssr")]
 async fn router(env: Env) -> axum::Router {
-    use std::sync::Arc;
-
     use axum::{Extension, Router};
     use leptos::prelude::*;
-    use leptos_axum::{generate_route_list, LeptosRoutes};
+    use leptos_axum::{LeptosRoutes, generate_route_list};
 
     let conf = get_configuration(None).unwrap();
     let leptos_options = conf.leptos_options;
@@ -57,47 +77,4 @@ async fn fetch(
 pub fn hydrate() {
     console_error_panic_hook::set_once();
     leptos::mount::hydrate_body(App);
-}
-
-#[cfg(feature = "ssr")]
-#[durable_object(alarm)]
-pub struct Batcher {
-    state: State,
-    env: Env,
-}
-
-#[cfg(feature = "ssr")]
-impl DurableObject for Batcher {
-    fn new(state: State, env: Env) -> Self {
-        Self {
-            state,
-            env,
-        }
-    }
-
-    async fn fetch(&self, _req: Request) -> Result<Response> {
-        Response::ok("Durable Object Batcher endpoint")
-    }
-}
-
-#[cfg(feature = "ssr")]
-#[durable_object]
-pub struct Board {
-    state: State,
-    env: Env,
-}
-
-#[cfg(feature = "ssr")]
-impl DurableObject for Board {
-    fn new(state: State, env: Env) -> Self {
-        Self {
-            state,
-            env,
-        }
-    }
-
-    async fn fetch(&self, _req: Request) -> Result<Response> {
-        // Handle WebSocket connections here
-        Response::ok("Durable Object WebSocket endpoint")
-    }
 }

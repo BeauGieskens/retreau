@@ -48,6 +48,7 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
                     <Route path=path!("/") view=HomePage />
+                    <Route path=path!("/boards/new") view=BoardPage />
                     <Route path=path!("/boards/:id") view=BoardPage />
                     <Route path=path!("/boards") view=HomePage />
                     <Route path=path!("/about") view=HomePage />

@@ -2,6 +2,12 @@ use leptos::prelude::*;
 
 #[server(SayHello)]
 pub async fn say_hello(num: i32) -> Result<String, ServerFnError> {
+    // let env: Extension<Arc<Env>> = extract().await?;
+    // let boards = env.durable_object("boards")?;
+    // let new_board = boards.id_from_name("whatever UUID we have in the DB")?;
+    // let board_stub = new_board.get_stub()?;
+    // let x = board_stub.fetch_with_str("ws");
+
     Ok(format!("Hello from the API!!! I got {num}"))
 }
 

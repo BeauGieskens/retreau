@@ -1,7 +1,8 @@
 [package]
 name = "retreau"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
+rust-version = "1.85"
 authors = ["Beau Gieskens <beau.gieskens@gmail.com>"]
 
 [profile.release]
@@ -29,7 +30,7 @@ features = ["wasm_js"]
 
 [dependencies.leptos]
 version = "0.8"
-features = ["nightly"]
+features = ["nightly", "rkyv"]
 
 [dependencies.leptos_axum]
 version = "0.8"
@@ -43,11 +44,21 @@ version = "0.8"
 [dependencies.leptos_router]
 version = "0.8"
 
+[dependencies.leptos-use]
+version = "0.18"
+
+[dependencies.rkyv]
+version = "0.8"
+
 [dependencies.stylance]
 version = "0.7"
 
 [dependencies.tower-service]
 version = "0.3"
+
+[dependencies.uuid]
+version = "1"
+features = ["v7", "js"]
 
 [dependencies.wasm-bindgen]
 version = "0.2"
