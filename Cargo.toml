@@ -50,15 +50,23 @@ version = "0.18"
 [dependencies.rkyv]
 version = "0.8"
 
+[dependencies.serde]
+version = "1"
+features = ["derive"]
+
 [dependencies.stylance]
 version = "0.7"
+
+[dependencies.time]
+version = "0.3"
+features = ["serde"]
 
 [dependencies.tower-service]
 version = "0.3"
 
 [dependencies.uuid]
 version = "1"
-features = ["v7", "js"]
+features = ["v7", "serde", "js"]
 
 [dependencies.wasm-bindgen]
 version = "0.2"

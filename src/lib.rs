@@ -4,6 +4,7 @@ mod components;
 mod durable_objects;
 mod pages;
 mod rkyv;
+mod types;
 
 #[cfg(feature = "ssr")]
 use std::sync::Arc;
@@ -17,6 +18,7 @@ use worker::*;
 
 pub use crate::app::*;
 
+#[cfg(feature = "ssr")]
 pub(crate) static DB_NAME: &str = "retreau";
 
 #[cfg(feature = "ssr")]

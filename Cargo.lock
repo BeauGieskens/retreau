@@ -462,6 +462,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7cd812cc2bc1d69d4764bd80df88b4317eaef9e773c75226407d9bc0876b211c"
 dependencies = [
  "powerfmt",
+ "serde_core",
 ]
 
 [[package]]
@@ -1847,7 +1848,9 @@ dependencies = [
  "leptos_meta",
  "leptos_router",
  "rkyv",
+ "serde",
  "stylance",
+ "time",
  "tower-service",
  "uuid",
  "wasm-bindgen",
@@ -2634,6 +2637,7 @@ checksum = "b672338555252d43fd2240c714dc444b8c6fb0a5c5335e65a07bba7742735ddb"
 dependencies = [
  "getrandom 0.4.1",
  "js-sys",
+ "serde_core",
  "wasm-bindgen",
 ]
 

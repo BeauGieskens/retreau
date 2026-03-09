@@ -35,10 +35,10 @@ CREATE TABLE team_member (
 
 CREATE TABLE board (
     id TEXT PRIMARY KEY,
-    team_id TEXT NOT NULL REFERENCES team(id) ON DELETE CASCADE,
+    team_id TEXT REFERENCES team(id) ON DELETE SET NULL,
     admin_id TEXT REFERENCES user(id) ON DELETE SET NULL,
-    name TEXT NOT NULL,
-    status TEXT NOT NULL, -- thinking, grouping, voting, completed
+    name TEXT NOT NULL DEFAULT 'Untitled Board',
+    status TEXT NOT NULL DEFAULT 'thinking', -- thinking, grouping, voting, completed
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP
