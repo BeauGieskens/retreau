@@ -1,9 +1,13 @@
+#![recursion_limit = "256"]
+
 pub mod app;
 mod components;
 #[cfg(feature = "ssr")]
 mod durable_objects;
 mod pages;
 mod rkyv;
+mod types;
+mod util;
 
 #[cfg(feature = "ssr")]
 use std::sync::Arc;
@@ -17,6 +21,7 @@ use worker::*;
 
 pub use crate::app::*;
 
+#[cfg(feature = "ssr")]
 pub(crate) static DB_NAME: &str = "retreau";
 
 #[cfg(feature = "ssr")]

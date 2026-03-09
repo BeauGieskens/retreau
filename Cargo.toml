@@ -2,7 +2,7 @@
 name = "retreau"
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.93"
 authors = ["Beau Gieskens <beau.gieskens@gmail.com>"]
 
 [profile.release]
@@ -14,6 +14,17 @@ codegen-units = 1
 [lib]
 crate-type = ["lib", "cdylib"]
 
+[features]
+hydrate = ["leptos/hydrate"]
+leptos-watch = ["hydrate"]
+ssr = [
+    "dep:axum",
+    "dep:leptos_axum",
+    "dep:worker",
+    "leptos/ssr",
+    "leptos_router/ssr",
+]
+
 [dependencies.axum]
 version = "0.8"
 default-features = false
@@ -22,11 +33,20 @@ optional = true
 [dependencies.console_error_panic_hook]
 version = "0.1"
 
-[dependencies.getrandom]
-# need to enable the wasm_js feature for something downstream
-# but it needs to be 0.3 specifically
+# need to enable the wasm_js feature for some things downstream
+[dependencies.getrandom-v03]
+package = "getrandom"
 version = "0.3"
 features = ["wasm_js"]
+
+[dependencies.getrandom-v04]
+package = "getrandom"
+version = "0.4"
+features = ["wasm_js"]
+
+[dependencies.jiff]
+version = "0.2"
+features = ["js", "serde"]
 
 [dependencies.leptos]
 version = "0.8"
@@ -45,39 +65,33 @@ version = "0.8"
 version = "0.8"
 
 [dependencies.leptos-use]
-version = "0.18"
+version = "0.19"
 
 [dependencies.rkyv]
 version = "0.8"
 
+[dependencies.serde]
+version = "1"
+features = ["derive"]
+
 [dependencies.stylance]
-version = "0.7"
+version = "0.8"
 
 [dependencies.tower-service]
 version = "0.3"
 
 [dependencies.uuid]
 version = "1"
-features = ["v7", "js"]
+features = ["v7", "serde", "js"]
 
 [dependencies.wasm-bindgen]
 version = "0.2"
 
 [dependencies.worker]
+# Can't go to 0.8 until Leptos uses wasm-streams 0.6 (https://github.com/leptos-rs/leptos/pull/4823)
 version = "0.7"
 features = ["http", "axum", "d1"]
 optional = true
-
-[features]
-hydrate = ["leptos/hydrate"]
-leptos-watch = ["hydrate"]
-ssr = [
-  "dep:axum",
-  "dep:leptos_axum",
-  "dep:worker",
-  "leptos/ssr",
-  "leptos_router/ssr",
-]
 
 [package.metadata.leptos]
 wasm-validation = false
@@ -152,9 +166,9 @@ lib-default-features = false
 # are used. For all features, consult `wasm-opt --help`.
 # By providing features, you will override the default enabled features.
 wasm-opt-features = [
-  "-Oz",
-  "--enable-bulk-memory",
-  "--enable-nontrapping-float-to-int",
+    "-Oz",
+    "--enable-bulk-memory",
+    "--enable-nontrapping-float-to-int",
 ]
 
 [package.metadata.wasm-pack.profile.release]

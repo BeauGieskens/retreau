@@ -13,6 +13,7 @@ cargo install --locked cargo-leptos
 cargo install --locked stylance-cli
 cargo install --locked worker-build
 cargo install --locked wasm-opt
+cargo install --locked wasm-bindgen-cli
 ```
 
 Rust nightly and the wasm32 target are also required:
