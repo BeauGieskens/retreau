@@ -1,7 +1,7 @@
 //! Structs that tell rkyv how to serialize and deserialize foreign types.
 
+use jiff::Timestamp;
 use rkyv::{Archive, Deserialize, Serialize};
-use time::UtcDateTime;
 use uuid::Uuid;
 
 #[derive(Archive, Deserialize, Serialize)]
@@ -35,38 +35,43 @@ fn opt_uuid(opt: &Option<Uuid>) -> Option<[u8; 16]> {
 }
 
 #[derive(Archive, Deserialize, Serialize)]
-#[rkyv(remote = UtcDateTime, archived = ArchivedUtcDateTime)]
-pub struct UtcDateTimeRkyv {
-    #[rkyv(getter = unix_timestamp_nanos)]
-    unix_timestamp_nanos: i128,
+#[rkyv(remote = Timestamp, archived = ArchivedTimestamp)]
+pub struct TimestampRkyv {
+    #[rkyv(getter = as_millisecond)]
+    unix_timestamp_millis: i64,
 }
 
-impl From<UtcDateTimeRkyv> for UtcDateTime {
-    fn from(archived: UtcDateTimeRkyv) -> Self {
-        UtcDateTime::from_unix_timestamp_nanos(archived.unix_timestamp_nanos)
-            .unwrap_or(UtcDateTime::UNIX_EPOCH)
+impl From<TimestampRkyv> for Timestamp {
+    fn from(archived: TimestampRkyv) -> Self {
+        Timestamp::from_millisecond(archived.unix_timestamp_millis).unwrap_or_else(|_| {
+            if archived.unix_timestamp_millis.is_negative() {
+                Timestamp::MIN
+            } else {
+                Timestamp::MAX
+            }
+        })
     }
 }
 
-fn unix_timestamp_nanos(dt: &UtcDateTime) -> i128 {
-    dt.unix_timestamp_nanos()
+fn as_millisecond(ts: &Timestamp) -> i64 {
+    ts.as_millisecond()
 }
 
 #[derive(Archive, Deserialize, Serialize)]
-#[rkyv(remote = Option<UtcDateTime>, archived = ArchivedOptionUtcDateTime)]
-pub struct OptionUtcDateTimeRkyv {
-    #[rkyv(getter = opt_unix_timestamp_nanos)]
-    unix_timestamp_nanos: Option<i128>,
+#[rkyv(remote = Option<Timestamp>, archived = ArchivedOptionTimestamp)]
+pub struct OptionTimestampRkyv {
+    #[rkyv(getter = opt_as_millisecond)]
+    unix_timestamp_millis: Option<i64>,
 }
 
-fn opt_unix_timestamp_nanos(opt: &Option<UtcDateTime>) -> Option<i128> {
-    opt.as_ref().map(|dt| dt.unix_timestamp_nanos())
-}
-
-impl From<OptionUtcDateTimeRkyv> for Option<UtcDateTime> {
-    fn from(archived: OptionUtcDateTimeRkyv) -> Self {
+impl From<OptionTimestampRkyv> for Option<Timestamp> {
+    fn from(archived: OptionTimestampRkyv) -> Self {
         archived
-            .unix_timestamp_nanos
-            .and_then(|nanos| UtcDateTime::from_unix_timestamp_nanos(nanos).ok())
+            .unix_timestamp_millis
+            .and_then(|millis| Timestamp::from_millisecond(millis).ok())
     }
+}
+
+fn opt_as_millisecond(opt: &Option<Timestamp>) -> Option<i64> {
+    opt.as_ref().map(|ts| ts.as_millisecond())
 }

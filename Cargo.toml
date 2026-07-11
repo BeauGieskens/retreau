@@ -2,7 +2,7 @@
 name = "retreau"
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.93"
 authors = ["Beau Gieskens <beau.gieskens@gmail.com>"]
 
 [profile.release]
@@ -27,6 +27,10 @@ version = "0.1"
 # but it needs to be 0.3 specifically
 version = "0.3"
 features = ["wasm_js"]
+
+[dependencies.jiff]
+version = "0.2"
+features = ["js", "serde"]
 
 [dependencies.leptos]
 version = "0.8"
@@ -56,10 +60,6 @@ features = ["derive"]
 
 [dependencies.stylance]
 version = "0.7"
-
-[dependencies.time]
-version = "0.3"
-features = ["serde"]
 
 [dependencies.tower-service]
 version = "0.3"

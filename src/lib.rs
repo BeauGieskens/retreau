@@ -5,6 +5,7 @@ mod durable_objects;
 mod pages;
 mod rkyv;
 mod types;
+mod util;
 
 #[cfg(feature = "ssr")]
 use std::sync::Arc;
