@@ -8,8 +8,8 @@ use crate::types::Board;
 #[cfg(feature = "ssr")]
 use crate::util::timestamp_millis_number;
 
-/// Create a new retro board and return its ID.
-#[server(output = Rkyv)]
+/// Create a new retro board and return it.
+#[server(CreateBoard, output = Rkyv)]
 #[cfg_attr(feature = "ssr", worker::send)]
 pub async fn create_board() -> Result<Board, ServerFnError> {
     let env = crate::get_worker_env().await.inspect_err(|error| {
@@ -43,7 +43,7 @@ pub async fn create_board() -> Result<Board, ServerFnError> {
 }
 
 /// Get a retro board by its ID.
-#[server(output = Rkyv)]
+#[server(GetBoard, output = Rkyv)]
 #[cfg_attr(feature = "ssr", worker::send)]
 pub async fn get_board(id: Uuid) -> Result<Board, ServerFnError> {
     let env = crate::get_worker_env().await?;

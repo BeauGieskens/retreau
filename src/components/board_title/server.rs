@@ -8,7 +8,7 @@ use uuid::Uuid;
 use crate::util::timestamp_millis_number;
 
 /// Set the name of a retro board.
-#[server(output = Rkyv)]
+#[server(SetBoardName, output = Rkyv)]
 #[cfg_attr(feature = "ssr", worker::send)]
 pub async fn set_board_name(id: Uuid, new_name: String) -> Result<(), ServerFnError> {
     let env = crate::get_worker_env().await?;

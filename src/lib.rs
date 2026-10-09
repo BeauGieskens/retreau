@@ -38,8 +38,11 @@ pub(crate) async fn get_worker_env() -> Result<Arc<Env>, ServerFnError> {
 pub fn register_server_functions() {
     use leptos::server_fn::axum::register_explicit;
 
-    // Add all of your server functions here
-    register_explicit::<components::show_data_from_api::SayHello>();
+    // Add all server functions here
+    register_explicit::<components::add_thought::server::AddThought>();
+    register_explicit::<components::board_title::server::SetBoardName>();
+    register_explicit::<pages::board_page::server::CreateBoard>();
+    register_explicit::<pages::board_page::server::GetBoard>();
 }
 
 #[cfg(feature = "ssr")]

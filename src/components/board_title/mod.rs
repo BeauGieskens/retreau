@@ -1,4 +1,4 @@
-mod server;
+pub mod server;
 
 use leptos::{ev::KeyboardEvent, html, prelude::*, web_sys::HtmlElement};
 use stylance::import_style;

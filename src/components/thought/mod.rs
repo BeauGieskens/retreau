@@ -1,13 +1,9 @@
 use leptos::prelude::*;
 use stylance::{classes, import_style};
 
-import_style!(style, "style.module.scss");
+use crate::types::ThoughtCategory;
 
-pub enum ThoughtCategory {
-    WentWell,
-    ToImprove,
-    Action,
-}
+import_style!(style, "style.module.scss");
 
 #[component]
 pub fn Thought(

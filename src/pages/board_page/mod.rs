@@ -1,4 +1,4 @@
-mod server;
+pub mod server;
 
 use jiff::Timestamp;
 use leptos::{Params, prelude::*};
@@ -11,8 +11,8 @@ use stylance::import_style;
 use uuid::Uuid;
 
 use crate::{
-    components::{AddThought, BoardTitle, Thought, thought::ThoughtCategory},
-    types::Board,
+    components::{AddThought, BoardTitle, Thought},
+    types::{Board, ThoughtCategory},
 };
 
 import_style!(style, "style.module.scss");
@@ -137,17 +137,17 @@ fn BoardPageInner(board: Signal<Board>) -> impl IntoView {
                     author="Bob"
                     blurred=true
                 />
-                <AddThought id="abc" category=ThoughtCategory::WentWell />
+                <AddThought board_id="abc" category=ThoughtCategory::WentWell />
             </section>
 
             <section class=style::column>
                 <h2 class=style::title>To Improve</h2>
-                <AddThought id="def" category=ThoughtCategory::ToImprove />
+                <AddThought board_id="def" category=ThoughtCategory::ToImprove />
             </section>
 
             <section class=style::column>
                 <h2 class=style::title>Actions</h2>
-                <AddThought id="ghi" category=ThoughtCategory::Action />
+                <AddThought board_id="ghi" category=ThoughtCategory::Action />
             </section>
         </div>
     }
