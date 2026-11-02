@@ -12,32 +12,41 @@ import_style!(style, "style.module.scss");
 #[component]
 pub fn AddThought(
     board: Store<Board>,
-    /// Creation requires an identified author; no identity is fabricated here.
+    /// ID of the user clicking the button.
     #[prop(optional)]
     author_id: Option<Uuid>,
     /// Category that the created thought will belong to.
-    #[prop(into)]
     category: ThoughtCategory,
 ) -> impl IntoView {
-    let add_thought = Action::new(move |author_id: &Uuid| {
+    let add_thought = Action::new(move |_| {
         let board_id = board.id().get_untracked();
-        let author_id = *author_id;
-        async move { server::add_thought(board_id, author_id, category).await }
+        async move {
+            let thought = server::add_thought(board_id, author_id, category).await?;
+            board.thoughts().update(|thoughts| thoughts.push(thought));
+            Ok::<_, ServerFnError>(())
+        }
     });
 
     view! {
         <div class=style::add_container>
             <button
                 class=style::add
-                disabled=author_id.is_none()
+                disabled=move || add_thought.pending().get()
                 on:click=move |_| {
-                    if let Some(author_id) = author_id {
-                        add_thought.dispatch(author_id);
-                    }
+                    add_thought.dispatch(());
                 }
             >
                 +
             </button>
+            {move || {
+                add_thought
+                    .value()
+                    .get()
+                    .and_then(Result::err)
+                    .map(|error| {
+                        view! { <p role="alert">{format!("Could not add thought: {error}")}</p> }
+                    })
+            }}
         </div>
     }
 }

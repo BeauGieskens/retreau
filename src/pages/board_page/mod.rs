@@ -11,7 +11,7 @@ use stylance::import_style;
 use uuid::Uuid;
 
 use crate::{
-    components::{AddThought, BoardTitle, Thought},
+    components::{BoardTitle, ThoughtColumn},
     state::{AppState, AppStateStoreFields},
     types::{Board, ThoughtCategory},
 };
@@ -85,33 +85,9 @@ fn BoardPageInner(board: Store<Board>) -> impl IntoView {
     view! {
         <BoardTitle board />
         <div class=style::layout>
-            <section class=style::column>
-                <h2 class=style::title>Went well</h2>
-                <Thought
-                    category=ThoughtCategory::WentWell
-                    thought="Great teamwork!"
-                    author="Alice"
-                    emoji="😁"
-                    blurred=false
-                />
-                <Thought
-                    category=ThoughtCategory::WentWell
-                    thought="Completed all tasks on time."
-                    author="Bob"
-                    blurred=true
-                />
-                <AddThought board category=ThoughtCategory::WentWell />
-            </section>
-
-            <section class=style::column>
-                <h2 class=style::title>To Improve</h2>
-                <AddThought board category=ThoughtCategory::ToImprove />
-            </section>
-
-            <section class=style::column>
-                <h2 class=style::title>Actions</h2>
-                <AddThought board category=ThoughtCategory::Action />
-            </section>
+            <ThoughtColumn board category=ThoughtCategory::WentWell />
+            <ThoughtColumn board category=ThoughtCategory::ToImprove />
+            <ThoughtColumn board category=ThoughtCategory::Action />
         </div>
     }
 }

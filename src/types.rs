@@ -61,6 +61,9 @@ pub struct Board {
     pub admin_id: Option<Uuid>,
     pub name: String,
     pub status: BoardStatus,
+    #[serde(default)]
+    #[store(key: Uuid = |thought| thought.id)]
+    pub thoughts: Vec<Thought>,
     #[serde(with = "jiff::fmt::serde::timestamp::millisecond::required")]
     #[rkyv(with = TimestampRkyv)]
     pub created_at: Timestamp,
@@ -73,9 +76,30 @@ pub struct Board {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Ser, De, Archive, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum ThoughtCategory {
+    #[serde(alias = "went_well")]
     WentWell,
+    #[serde(alias = "to_improve")]
     ToImprove,
     Action,
+}
+
+impl ThoughtCategory {
+    pub fn column_title(&self) -> &'static str {
+        match self {
+            Self::WentWell => "Went well",
+            Self::ToImprove => "To improve",
+            Self::Action => "Actions",
+        }
+    }
+
+    #[cfg(feature = "ssr")]
+    pub fn db_value(&self) -> &'static str {
+        match self {
+            Self::WentWell => "went_well",
+            Self::ToImprove => "to_improve",
+            Self::Action => "action",
+        }
+    }
 }
 
 impl Display for ThoughtCategory {
@@ -89,14 +113,14 @@ impl Display for ThoughtCategory {
 }
 
 /// A thought that someone has added to a retro board.
-#[derive(Debug, Clone, PartialEq, Eq, Ser, De, Archive, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Ser, De, Archive, Deserialize, Serialize, Store)]
 pub struct Thought {
     #[rkyv(with = UuidRkyv)]
     pub id: Uuid,
     #[rkyv(with = UuidRkyv)]
     pub board_id: Uuid,
-    #[rkyv(with = UuidRkyv)]
-    pub author_id: Uuid,
+    #[rkyv(with = OptionUuidRkyv)]
+    pub author_id: Option<Uuid>,
     pub content: String,
     pub emoji: String,
     pub category: ThoughtCategory,

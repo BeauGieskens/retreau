@@ -1,5 +1,6 @@
 use worker::*;
 
+#[expect(unused, reason = "will probably set up env much later")]
 #[durable_object]
 pub struct Board {
     state: State,
@@ -21,8 +22,8 @@ impl DurableObject for Board {
 
     async fn websocket_message(
         &self,
-        ws: WebSocket,
-        message: WebSocketIncomingMessage,
+        _ws: WebSocket,
+        _message: WebSocketIncomingMessage,
     ) -> Result<()> {
         Ok(())
     }

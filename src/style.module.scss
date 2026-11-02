@@ -1,4 +1,6 @@
 :root {
+    height: 100%;
+
     --color-bg: #1e1e1e;
     --color-surface: #2a2a2a;
     --color-surface-hover: #333;
@@ -14,6 +16,11 @@
 }
 
 body {
+    box-sizing: border-box;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
     margin: 0;
     font-family: "Manrope", "Helvetica Neue", "Arial", sans-serif;
     background-color: var(--color-bg);
@@ -24,6 +31,7 @@ body {
 }
 
 main {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -46,13 +46,14 @@ pub async fn create_board() -> Result<Board, ServerFnError> {
 #[server(GetBoard, output = Rkyv)]
 #[cfg_attr(feature = "ssr", worker::send)]
 pub async fn get_board(id: Uuid) -> Result<Board, ServerFnError> {
-    let env = crate::get_worker_env().await?;
+    let env = crate::get_worker_env().await.inspect_err(|error| {
+        worker::console_error!("{error}");
+    })?;
 
-    let board = env
-        .d1(crate::DB_NAME)
-        .inspect_err(|error| {
-            worker::console_error!("{error}");
-        })?
+    let db = env.d1(crate::DB_NAME).inspect_err(|error| {
+        worker::console_error!("{error}");
+    })?;
+    let mut board: Board = db
         .prepare(
             "
             SELECT id, team_id, admin_id, name, status, created_at, updated_at \
@@ -69,6 +70,27 @@ pub async fn get_board(id: Uuid) -> Result<Board, ServerFnError> {
             worker::console_error!("{error}");
         })?
         .ok_or_else(|| ServerFnError::new("Board not found"))?;
+
+    board.thoughts = db
+        .prepare(
+            "SELECT id, board_id, author_id, content, COALESCE(emoji, '🫥') AS emoji, \
+                category, votes, idx, connected_thought_id, created_at, updated_at, deleted_at \
+             FROM thought WHERE board_id = ?1 AND deleted_at IS NULL \
+             ORDER BY idx, created_at, id",
+        )
+        .bind(&[id.as_simple().to_string().into()])
+        .inspect_err(|error| {
+            worker::console_error!("{error}");
+        })?
+        .all()
+        .await
+        .inspect_err(|error| {
+            worker::console_error!("{error}");
+        })?
+        .results()
+        .inspect_err(|error| {
+            worker::console_error!("{error}");
+        })?;
 
     Ok(board)
 }

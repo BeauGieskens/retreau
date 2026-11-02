@@ -13,7 +13,7 @@ use crate::util::timestamp_millis_number;
 pub async fn set_board_name(id: Uuid, new_name: String) -> Result<(), ServerFnError> {
     let env = crate::get_worker_env().await?;
 
-    let board = env
+    let _board = env
         .d1(crate::DB_NAME)
         .inspect_err(|error| {
             worker::console_error!("{error}");
