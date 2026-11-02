@@ -1,6 +1,10 @@
-use std::fmt;
-use std::fmt::{Display, Formatter};
+use std::{
+    fmt,
+    fmt::{Display, Formatter},
+};
+
 use jiff::Timestamp;
+use reactive_stores::Store;
 use rkyv::{Archive, Deserialize, Serialize};
 use serde::{Deserialize as De, Serialize as Ser};
 use uuid::Uuid;
@@ -47,7 +51,7 @@ impl Display for BoardStatus {
 }
 
 /// A retro board.
-#[derive(Debug, Clone, PartialEq, Eq, Ser, De, Archive, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Ser, De, Archive, Deserialize, Serialize, Store)]
 pub struct Board {
     #[rkyv(with = UuidRkyv)]
     pub id: Uuid,

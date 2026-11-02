@@ -6,6 +6,7 @@ mod components;
 mod durable_objects;
 mod pages;
 mod rkyv;
+mod state;
 mod types;
 mod util;
 

@@ -1,20 +1,18 @@
 pub mod server;
 
 use leptos::{ev::KeyboardEvent, html, prelude::*, web_sys::HtmlElement};
+use reactive_stores::Store;
 use stylance::import_style;
-use uuid::Uuid;
+
+use crate::types::{Board, BoardStoreFields};
 
 import_style!(style, "style.module.scss");
 
 #[component]
-pub fn BoardTitle(
-    /// ID of the board.
-    id: Signal<Uuid>,
-    /// Signal for the board's title.
-    title: RwSignal<String>,
-) -> impl IntoView {
+pub fn BoardTitle(board: Store<Board>) -> impl IntoView {
+    let title = board.name();
     let set_board_name = Action::new(move |new_name: &String| {
-        let board_id = id.get_untracked();
+        let board_id = board.id().get_untracked();
         let new_name = new_name.clone();
         async move { server::set_board_name(board_id, new_name).await }
     });
@@ -58,7 +56,7 @@ pub fn BoardTitle(
                     }
                 }
             >
-                {title}
+                {move || title.get()}
             </h1>
         </div>
     }

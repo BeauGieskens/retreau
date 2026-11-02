@@ -4,10 +4,12 @@ use leptos_router::{
     components::{Route, Router, Routes},
     path,
 };
+use reactive_stores::Store;
 
 use crate::{
     components::Navbar,
     pages::{BoardPage, ErrorPage, HomePage},
+    state::AppState,
 };
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
@@ -35,7 +37,7 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 }
 
 #[component]
-fn BoardRoute() -> impl IntoView {
+fn BoardRoute(state: Store<AppState>) -> impl IntoView {
     view! {
         <ErrorBoundary fallback=|errors| {
             for error in errors.get().into_iter() {
@@ -43,7 +45,7 @@ fn BoardRoute() -> impl IntoView {
             }
             view! { <ErrorPage /> }
         }>
-            <BoardPage />
+            <BoardPage state />
         </ErrorBoundary>
     }
 }
@@ -52,6 +54,7 @@ fn BoardRoute() -> impl IntoView {
 pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
+    let state = Store::new(AppState::default());
 
     view! {
         // injects a stylesheet into the document <head>
@@ -62,8 +65,8 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
                     <Route path=path!("/") view=HomePage />
-                    <Route path=path!("/boards/new") view=BoardRoute />
-                    <Route path=path!("/boards/:id") view=BoardRoute />
+                    <Route path=path!("/boards/new") view=move || view! { <BoardRoute state /> } />
+                    <Route path=path!("/boards/:id") view=move || view! { <BoardRoute state /> } />
                     <Route path=path!("/boards") view=HomePage />
                     <Route path=path!("/about") view=HomePage />
                 </Routes>

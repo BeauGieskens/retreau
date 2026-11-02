@@ -12,8 +12,8 @@ use crate::util::timestamp_millis_number;
 #[server(AddThought, output = Rkyv)]
 #[cfg_attr(feature = "ssr", worker::send)]
 pub async fn add_thought(
-    board_id: String,
-    author_id: String,
+    board_id: Uuid,
+    author_id: Uuid,
     category: ThoughtCategory,
 ) -> Result<Thought, ServerFnError> {
     let env = crate::get_worker_env().await.inspect_err(|error| {
@@ -37,7 +37,7 @@ pub async fn add_thought(
         )
         .bind(&[
             id.as_simple().to_string().into(),
-            board_id.into(),
+            board_id.as_simple().to_string().into(),
             author_id.as_simple().to_string().into(),
             category.to_string().into(),
             timestamp_millis_number(Timestamp::now()).into(),

@@ -1,17 +1,18 @@
 pub mod server;
 
-use jiff::Timestamp;
 use leptos::{Params, prelude::*};
 use leptos_router::{
     NavigateOptions,
     hooks::{use_navigate, use_params},
     params::Params,
 };
+use reactive_stores::{ArcStore, Store};
 use stylance::import_style;
 use uuid::Uuid;
 
 use crate::{
     components::{AddThought, BoardTitle, Thought},
+    state::{AppState, AppStateStoreFields},
     types::{Board, ThoughtCategory},
 };
 
@@ -23,7 +24,7 @@ pub struct BoardParams {
 }
 
 #[component]
-pub fn BoardPage() -> impl IntoView {
+pub fn BoardPage(state: Store<AppState>) -> impl IntoView {
     let params = use_params::<BoardParams>();
     let navigate = use_navigate();
 
@@ -36,33 +37,6 @@ pub fn BoardPage() -> impl IntoView {
             }
         },
     );
-
-    let fallback_board = move || match params.read().as_ref().ok().and_then(|params| params.id) {
-        Some(id) => Board {
-            id,
-            team_id: None,
-            admin_id: None,
-            name: "Loading…".to_string(),
-            status: Default::default(),
-            created_at: Timestamp::now(),
-            updated_at: None,
-        },
-        None => Board {
-            id: Uuid::now_v7(),
-            team_id: None,
-            admin_id: None,
-            name: "Untitled Board".to_string(),
-            status: Default::default(),
-            created_at: Timestamp::now(),
-            updated_at: None,
-        },
-    };
-
-    // Keep the rendered board reactive so fallback data is replaced as soon as the server responds.
-    let board = Memo::new(move |_| match board_resource.get() {
-        Some(Ok(board)) => board,
-        _ => fallback_board(),
-    });
 
     Effect::new(move |_| {
         if params
@@ -85,42 +59,31 @@ pub fn BoardPage() -> impl IntoView {
         }
     });
 
-    let error = move || board_resource.get().and_then(|result| result.err());
-
     view! {
-        {move || -> Result<_, ServerFnError> {
-            if let Some(error) = error() {
-                return Err(error);
-            }
-            Ok(view! { <BoardPageInner board=board.into() /> })
-        }}
+        <Suspense fallback=|| {
+            view! { <p>"Loading board…"</p> }
+        }>
+            {move || {
+                board_resource
+                    .get()
+                    .map(|result| {
+                        result
+                            .map(|board| {
+                                let board = ArcStore::new(board);
+                                state.board().set(Some(board.clone()));
+                                let board = Store::from(board);
+                                view! { <BoardPageInner board /> }
+                            })
+                    })
+            }}
+        </Suspense>
     }
 }
 
 #[component]
-fn BoardPageInner(board: Signal<Board>) -> impl IntoView {
-    let initial_board = board.get();
-    let board_name = RwSignal::new(initial_board.name);
-    let status = RwSignal::new(initial_board.status);
-    let team_id = RwSignal::new(initial_board.team_id);
-    let admin_id = RwSignal::new(initial_board.admin_id);
-    let updated_at = RwSignal::new(initial_board.updated_at);
-    let created_at = RwSignal::new(initial_board.created_at);
-
-    Effect::new(move |_| {
-        let board = board.get();
-        board_name.set(board.name);
-        status.set(board.status);
-        team_id.set(board.team_id);
-        admin_id.set(board.admin_id);
-        updated_at.set(board.updated_at);
-        created_at.set(board.created_at);
-    });
-
-    let board_id = Signal::derive(move || board.get().id);
-
+fn BoardPageInner(board: Store<Board>) -> impl IntoView {
     view! {
-        <BoardTitle id=board_id title=board_name.clone() />
+        <BoardTitle board />
         <div class=style::layout>
             <section class=style::column>
                 <h2 class=style::title>Went well</h2>
@@ -137,17 +100,17 @@ fn BoardPageInner(board: Signal<Board>) -> impl IntoView {
                     author="Bob"
                     blurred=true
                 />
-                <AddThought board_id="abc" category=ThoughtCategory::WentWell />
+                <AddThought board category=ThoughtCategory::WentWell />
             </section>
 
             <section class=style::column>
                 <h2 class=style::title>To Improve</h2>
-                <AddThought board_id="def" category=ThoughtCategory::ToImprove />
+                <AddThought board category=ThoughtCategory::ToImprove />
             </section>
 
             <section class=style::column>
                 <h2 class=style::title>Actions</h2>
-                <AddThought board_id="ghi" category=ThoughtCategory::Action />
+                <AddThought board category=ThoughtCategory::Action />
             </section>
         </div>
     }
