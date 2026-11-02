@@ -2,13 +2,14 @@
 
 Tech stack: Leptos, Cloudflare workers (via WASM). Main libraries include `reactive_stores`, `leptos-use`, and `stylance`.
 
-Format files with `leptosfmt **/*.rs` after editing, then follow that up with `cargo +nightly fmt --config=imports_granularity=Crate,group_imports=StdExternalCrate`.
+Format files with `leptosfmt **/*.rs` after editing, then follow that up with `cargo +nightly fmt -- --config=imports_granularity=Crate,group_imports=StdExternalCrate`.
 
 ## Style
 
 - Use `<Component state />` shorthand instead of doing `<Component state=state />`, where possible.
 - Use `inspect_err` on server-side functions to log errors with `worker::console_error!("{error}");`.
 - Use 4-space tabs for SCSS files.
+- Don't worry about ARIA labels, roles, etc. for now. Those can come later.
 
 ## State
 
