@@ -24,7 +24,6 @@
 
     .thought {
         font: inherit;
-        font-size: 1rem;
         line-height: 1.5;
         color: var(--color-text);
         white-space: pre-wrap;
@@ -63,7 +62,8 @@
             overflow: hidden;
 
             &::placeholder {
-                color: var(--text-secondary);
+                color: var(--color-text-placeholder);
+                font-style: italic;
             }
         }
     }
@@ -95,6 +95,49 @@
         position: absolute;
         bottom: 0.5rem;
         right: 0.5rem;
+    }
+
+    .delete {
+        position: absolute;
+        bottom: 0.5rem;
+        left: 0.5rem;
+        display: grid;
+        place-items: center;
+        width: 1.125rem;
+        height: 1.125rem;
+        font-size: 0.75rem;
+        line-height: 1;
+        padding: 0;
+        border: 0;
+        border-radius: 3px;
+        background: transparent;
+        color: var(--text-secondary);
+        cursor: pointer;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 120ms;
+
+        &:hover {
+            color: var(--color-text);
+            background: var(--color-surface);
+        }
+
+        &:disabled {
+            cursor: wait;
+        }
+    }
+
+    &:hover .delete,
+    .delete:focus-visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    @media (hover: none) {
+        .delete {
+            opacity: 1;
+            pointer-events: auto;
+        }
     }
 
     .emoji {

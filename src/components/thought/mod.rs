@@ -27,8 +27,17 @@ pub fn Thought(
             Ok::<_, ServerFnError>(())
         }
     });
+    let delete = Action::new(move |_| {
+        let id = thought.id().get_untracked();
+        async move {
+            server::delete_thought(id).await?;
+            thought.deleted_at().set(Some(jiff::Timestamp::now()));
+            Ok::<_, ServerFnError>(())
+        }
+    });
     let save_changes = move || {
         if !blurred
+            && !delete.pending().get_untracked()
             && !save.pending().get_untracked()
             && draft.get_untracked() != thought.content().get_untracked()
         {
@@ -71,6 +80,30 @@ pub fn Thought(
                     }}
                 </div>
             </Show>
+            <button
+                type="button"
+                class=style::delete
+                title="Delete this thought"
+                disabled=move || delete.pending().get() || save.pending().get()
+                on:click=move |_| {
+                    delete.dispatch(());
+                }
+            >
+                "🗑️"
+            </button>
+            {move || {
+                delete
+                    .value()
+                    .get()
+                    .and_then(Result::err)
+                    .map(|error| {
+                        view! {
+                            <div class=style::feedback>
+                                {format!("Failed to delete thought: {error}")}
+                            </div>
+                        }
+                    })
+            }}
             <div class=style::emoji>{move || thought.emoji().get()}</div>
             <div class=style::meta>
                 {move || {
