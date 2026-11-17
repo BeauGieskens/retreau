@@ -4,6 +4,8 @@ Tech stack: Leptos, Cloudflare workers (via WASM). Main libraries include `react
 
 Format files with `leptosfmt **/*.rs` after editing, then follow that up with `cargo +nightly fmt -- --config=imports_granularity=Crate,group_imports=StdExternalCrate`.
 
+Don't add stuff to README.md unless requested to do so.
+
 ## Style
 
 - Use `<Component state />` shorthand instead of doing `<Component state=state />`, where possible.
@@ -17,7 +19,7 @@ Use `reactive_stores` to manage state in most cases. Prefer explicit props over 
 
 ## Tests
 
-NEVER write unit tests. This project is just for fun.
+NEVER write unit tests. This project is just for fun. NEVER try to run it yourself or test it in a browser.
 
 ## Architecture
 

@@ -1,6 +1,6 @@
 pub mod server;
 
-use leptos::prelude::*;
+use leptos::{html, prelude::*};
 use leptos_use::use_interval_fn;
 use reactive_stores::Field;
 use stylance::{classes, import_style};
@@ -9,14 +9,24 @@ use crate::types::{Thought as ThoughtData, ThoughtStoreFields};
 
 import_style!(style, "style.module.scss");
 
+/// A thought card with editor and emoji selector.
 #[component]
 pub fn Thought(
     #[prop(into)] thought: Field<ThoughtData>,
     /// Whether to blur the contents of the thought.
     #[prop(optional)]
     blurred: bool,
+    /// Focus the editor once it is mounted, for locally created thoughts.
+    #[prop(optional)]
+    focus_on_mount: bool,
 ) -> impl IntoView {
     let draft = RwSignal::new(thought.content().get_untracked());
+    let editor = NodeRef::<html::Textarea>::new();
+    if focus_on_mount && !blurred {
+        editor.on_load(|textarea| {
+            textarea.focus().ok();
+        });
+    }
 
     let save = Action::new(move |content: &String| {
         let content = content.clone();
@@ -61,6 +71,7 @@ pub fn Thought(
             >
                 <div class=style::editor data-content=move || format!("{} ", draft.get())>
                     <textarea
+                        node_ref=editor
                         class=style::thought
                         placeholder="Write a thought…"
                         rows="1"

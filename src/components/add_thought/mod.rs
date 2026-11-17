@@ -9,6 +9,7 @@ use crate::types::{Board, BoardStoreFields, ThoughtCategory};
 
 import_style!(style, "style.module.scss");
 
+/// Add an empty thought to a column and request focus for its editor.
 #[component]
 pub fn AddThought(
     board: Store<Board>,
@@ -17,11 +18,14 @@ pub fn AddThought(
     author_id: Option<Uuid>,
     /// Category that the created thought will belong to.
     category: ThoughtCategory,
+    /// Identifies a newly added thought that should be focused upon beind added.
+    focus_thought: RwSignal<Option<Uuid>>,
 ) -> impl IntoView {
     let add_thought = Action::new(move |_| {
         let board_id = board.id().get_untracked();
         async move {
             let thought = server::add_thought(board_id, author_id, category).await?;
+            focus_thought.set(Some(thought.id));
             board.thoughts().update(|thoughts| thoughts.push(thought));
             Ok::<_, ServerFnError>(())
         }

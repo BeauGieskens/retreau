@@ -9,7 +9,7 @@ CREATE TABLE user (
 
 CREATE TABLE user_identity (
     id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
     provider TEXT NOT NULL,
     subject TEXT NOT NULL,  -- unique identifier from OIDC
     UNIQUE (provider, subject)
