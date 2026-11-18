@@ -92,6 +92,15 @@ impl ThoughtCategory {
         }
     }
 
+    /// The only emojis that can be selected for a thought in this category.
+    pub const fn emoji_choices(self) -> &'static [&'static str] {
+        match self {
+            Self::WentWell => &["🎉", "👏", "😁", "😌", "🫡"],
+            Self::ToImprove => &["🤔", "😶", "😕", "😞", "😳"],
+            Self::Action => &["✅", "📅", "✉️", "✍️", "👉"],
+        }
+    }
+
     #[cfg(feature = "ssr")]
     pub fn db_value(&self) -> &'static str {
         match self {

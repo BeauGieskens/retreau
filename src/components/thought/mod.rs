@@ -37,6 +37,19 @@ pub fn Thought(
             Ok::<_, ServerFnError>(())
         }
     });
+    let save_emoji = Action::new(move |emoji: &&'static str| {
+        let emoji = (*emoji).to_owned();
+        let id = thought.id().get_untracked();
+        let category = thought.category().get_untracked();
+        async move {
+            server::set_thought_emoji(id, category, emoji.clone()).await?;
+            thought.emoji().set(emoji);
+            Ok::<_, ServerFnError>(())
+        }
+    });
+    let picker_id = format!("thought-emoji-{}", thought.id().get_untracked());
+    let picker_anchor_style = format!("--emoji-picker-anchor: --{picker_id}");
+    let picker = NodeRef::<html::Div>::new();
     let delete = Action::new(move |_| {
         let id = thought.id().get_untracked();
         async move {
@@ -58,7 +71,7 @@ pub fn Thought(
     let _ = use_interval_fn(save_changes, 1_000);
 
     view! {
-        <div class=style::thought_card>
+        <div class=style::thought_card style=picker_anchor_style>
             <Show
                 when=move || !blurred
                 fallback=move || {
@@ -95,7 +108,9 @@ pub fn Thought(
                 type="button"
                 class=style::delete
                 title="Delete this thought"
-                disabled=move || delete.pending().get() || save.pending().get()
+                disabled=move || {
+                    delete.pending().get() || save.pending().get() || save_emoji.pending().get()
+                }
                 on:click=move |_| {
                     delete.dispatch(());
                 }
@@ -115,7 +130,60 @@ pub fn Thought(
                         }
                     })
             }}
-            <div class=style::emoji>{move || thought.emoji().get()}</div>
+            <button
+                type="button"
+                class=style::emoji
+                title="Change emoji"
+                popovertarget=picker_id.clone()
+                disabled=move || delete.pending().get()
+            >
+                {move || thought.emoji().get()}
+            </button>
+            <div id=picker_id class=style::emoji_picker popover="auto" node_ref=picker>
+                {move || {
+                    thought
+                        .category()
+                        .get()
+                        .emoji_choices()
+                        .iter()
+                        .map(|&emoji| {
+                            view! {
+                                <button
+                                    type="button"
+                                    class=(
+                                        style::emoji_current,
+                                        move || thought.emoji().get() == emoji,
+                                    )
+                                    disabled=move || {
+                                        save_emoji.pending().get() || delete.pending().get()
+                                    }
+                                    on:click=move |_| {
+                                        if let Some(picker) = picker.get_untracked() {
+                                            picker.hide_popover().ok();
+                                        }
+                                        save_emoji.dispatch(emoji);
+                                    }
+                                >
+                                    {emoji}
+                                </button>
+                            }
+                        })
+                        .collect_view()
+                }}
+            </div>
+            {move || {
+                save_emoji
+                    .value()
+                    .get()
+                    .and_then(Result::err)
+                    .map(|error| {
+                        view! {
+                            <div class=style::feedback>
+                                {format!("Failed to save emoji: {error}")}
+                            </div>
+                        }
+                    })
+            }}
             <div class=style::meta>
                 {move || {
                     thought

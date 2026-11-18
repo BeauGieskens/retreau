@@ -30,7 +30,9 @@ pub fn ThoughtColumn(board: Store<Board>, category: ThoughtCategory) -> impl Int
                 }
                 key=|thought| thought.id().get_untracked()
                 children=move |thought| {
-                    let focus_on_mount = focus_thought.get_untracked().is_some_and(|id| id == thought.id().get_untracked());
+                    let focus_on_mount = focus_thought
+                        .get_untracked()
+                        .is_some_and(|id| id == thought.id().get_untracked());
                     if focus_on_mount {
                         focus_thought.set(None);
                     }
