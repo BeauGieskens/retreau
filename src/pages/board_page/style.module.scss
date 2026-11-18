@@ -1,7 +1,7 @@
 .layout {
     display: grid;
     grid-template-columns: repeat(3, var(--board-column-width));
-    gap: var(--column-gap);
+    gap: 2.5rem;
 
     @media screen and (max-width: 1860px) {
         grid-template-columns: repeat(3, 1fr);
