@@ -45,7 +45,7 @@ pub async fn create_board() -> Result<Board, ServerFnError> {
 /// Get a retro board by its ID.
 #[server(GetBoard, output = Rkyv)]
 #[cfg_attr(feature = "ssr", worker::send)]
-pub async fn get_board(id: Uuid) -> Result<Board, ServerFnError> {
+pub async fn get_board(id: Uuid) -> Result<Option<Board>, ServerFnError> {
     let env = crate::get_worker_env().await.inspect_err(|error| {
         worker::console_error!("{error}");
     })?;
@@ -53,23 +53,25 @@ pub async fn get_board(id: Uuid) -> Result<Board, ServerFnError> {
     let db = env.d1(crate::DB_NAME).inspect_err(|error| {
         worker::console_error!("{error}");
     })?;
-    let mut board: Board = db
+    let Some(mut board) = db
         .prepare(
             "
             SELECT id, team_id, admin_id, name, status, created_at, updated_at \
-            FROM board WHERE id = ?1 \
+            FROM board WHERE id = ?1 AND deleted_at IS NULL \
             ",
         )
         .bind(&[id.as_simple().to_string().into()])
         .inspect_err(|error| {
             worker::console_error!("{error}");
         })?
-        .first(None)
+        .first::<Board>(None)
         .await
         .inspect_err(|error| {
             worker::console_error!("{error}");
         })?
-        .ok_or_else(|| ServerFnError::new("Board not found"))?;
+    else {
+        return Ok(None);
+    };
 
     board.thoughts = db
         .prepare(
@@ -92,5 +94,5 @@ pub async fn get_board(id: Uuid) -> Result<Board, ServerFnError> {
             worker::console_error!("{error}");
         })?;
 
-    Ok(board)
+    Ok(Some(board))
 }

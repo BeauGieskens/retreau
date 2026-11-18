@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 use leptos_meta::{MetaTags, Stylesheet, provide_meta_context};
 use leptos_router::{
+    SsrMode,
     components::{Route, Router, Routes},
     path,
 };
@@ -37,20 +38,6 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 }
 
 #[component]
-fn BoardRoute(state: Store<AppState>) -> impl IntoView {
-    view! {
-        <ErrorBoundary fallback=|errors| {
-            for error in errors.get().into_iter() {
-                leptos::logging::error!("{error:?}");
-            }
-            view! { <ErrorPage /> }
-        }>
-            <BoardPage state />
-        </ErrorBoundary>
-    }
-}
-
-#[component]
 pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
@@ -65,12 +52,38 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
                     <Route path=path!("/") view=HomePage />
-                    <Route path=path!("/boards/new") view=move || view! { <BoardRoute state /> } />
-                    <Route path=path!("/boards/:id") view=move || view! { <BoardRoute state /> } />
+                    <Route
+                        path=path!("/boards/new")
+                        view=move || view! { <BoardRoute state create=true /> }
+                    />
+                    <Route
+                        path=path!("/boards/:id")
+                        ssr=SsrMode::Async
+                        view=move || view! { <BoardRoute state /> }
+                    />
                     <Route path=path!("/boards") view=HomePage />
                     <Route path=path!("/about") view=HomePage />
                 </Routes>
             </main>
         </Router>
+    }
+}
+
+#[component]
+fn BoardRoute(
+    state: Store<AppState>,
+    /// Whether to create a new board upon loading the page.
+    #[prop(optional)]
+    create: bool,
+) -> impl IntoView {
+    view! {
+        <ErrorBoundary fallback=|errors| {
+            for error in errors.get().into_iter() {
+                leptos::logging::error!("{error:?}");
+            }
+            view! { <ErrorPage /> }
+        }>
+            <BoardPage state create />
+        </ErrorBoundary>
     }
 }

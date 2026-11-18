@@ -4,7 +4,7 @@ Tech stack: Leptos, Cloudflare workers (via WASM). Main libraries include `react
 
 Format files with `leptosfmt **/*.rs` after editing, then follow that up with `cargo +nightly fmt -- --config=imports_granularity=Crate,group_imports=StdExternalCrate`.
 
-Don't add stuff to README.md unless requested to do so.
+Don't add stuff to README.md unless requested to do so. Don't tell me when you ran some tool successfully (or opted not to run one).
 
 ## Style
 

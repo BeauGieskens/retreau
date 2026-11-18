@@ -19,45 +19,47 @@ use crate::{
 import_style!(style, "style.module.scss");
 
 #[derive(PartialEq, Params)]
-pub struct BoardParams {
+struct BoardParams {
     id: Option<Uuid>,
 }
 
 #[component]
-pub fn BoardPage(state: Store<AppState>) -> impl IntoView {
+pub fn BoardPage(state: Store<AppState>, create: bool) -> impl IntoView {
     let params = use_params::<BoardParams>();
     let navigate = use_navigate();
 
     let board_resource = Resource::new_rkyv(
-        move || params.read().as_ref().ok().and_then(|params| params.id),
-        |maybe_id| async move {
-            match maybe_id {
-                Some(id) => server::get_board(id).await,
-                None => server::create_board().await,
+        move || {
+            if create {
+                None
+            } else {
+                params.read().as_ref().ok().and_then(|params| params.id)
+            }
+        },
+        move |maybe_id| async move {
+            if create {
+                server::create_board().await.map(Some)
+            } else if let Some(id) = maybe_id {
+                server::get_board(id).await
+            } else {
+                Ok(None)
             }
         },
     );
 
-    Effect::new(move |_| {
-        if params
-            .read()
-            .as_ref()
-            .ok()
-            .and_then(|params| params.id)
-            .is_some()
-        {
-            return;
-        }
-        if let Some(Ok(board)) = board_resource.get() {
-            navigate(
-                &format!("/boards/{}", board.id),
-                NavigateOptions {
-                    replace: true,
-                    ..Default::default()
-                },
-            );
-        }
-    });
+    if create {
+        Effect::new(move |_| {
+            if let Some(Ok(Some(board))) = board_resource.get() {
+                navigate(
+                    &format!("/boards/{}", board.id),
+                    NavigateOptions {
+                        replace: true,
+                        ..Default::default()
+                    },
+                );
+            }
+        });
+    }
 
     view! {
         <Suspense fallback=|| {
@@ -69,15 +71,33 @@ pub fn BoardPage(state: Store<AppState>) -> impl IntoView {
                     .map(|result| {
                         result
                             .map(|board| {
-                                let board = ArcStore::new(board);
-                                state.board().set(Some(board.clone()));
-                                let board = Store::from(board);
-                                view! { <BoardPageInner board /> }
+                                match board {
+                                    Some(board) => {
+                                        let board = ArcStore::new(board);
+                                        state.board().set(Some(board.clone()));
+                                        let board = Store::from(board);
+                                        view! { <BoardPageInner board /> }.into_any()
+                                    }
+                                    None => {
+                                        state.board().set(None);
+                                        view! { <BoardNotFound /> }.into_any()
+                                    }
+                                }
                             })
                     })
             }}
         </Suspense>
     }
+}
+
+#[component]
+fn BoardNotFound() -> impl IntoView {
+    #[cfg(feature = "ssr")]
+    if let Some(response) = use_context::<leptos_axum::ResponseOptions>() {
+        response.set_status(axum::http::StatusCode::NOT_FOUND);
+    }
+
+    view! { <h1>"404: Board not found"</h1> }
 }
 
 #[component]
