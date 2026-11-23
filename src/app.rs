@@ -9,7 +9,7 @@ use reactive_stores::Store;
 
 use crate::{
     components::Navbar,
-    pages::{BoardPage, ErrorPage, HomePage},
+    pages::{BoardPage, ErrorPage, HomePage, LoginPage},
     state::AppState,
 };
 
@@ -52,6 +52,7 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
                     <Route path=path!("/") view=HomePage />
+                    <Route path=path!("/login") view=LoginPage />
                     <Route
                         path=path!("/boards/new")
                         view=move || view! { <BoardRoute state create=true /> }

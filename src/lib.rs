@@ -1,6 +1,8 @@
 #![recursion_limit = "256"]
 
 pub mod app;
+#[cfg(feature = "ssr")]
+mod auth;
 mod components;
 #[cfg(feature = "ssr")]
 mod durable_objects;
@@ -13,6 +15,8 @@ mod util;
 #[cfg(feature = "ssr")]
 use std::sync::Arc;
 
+#[cfg(feature = "ssr")]
+use auth::OidcProvider;
 #[cfg(feature = "ssr")]
 pub use durable_objects::Board;
 #[cfg(feature = "ssr")]
@@ -48,7 +52,7 @@ pub fn register_server_functions() {
 
 #[cfg(feature = "ssr")]
 async fn router(env: Env) -> axum::Router {
-    use axum::{Extension, Router};
+    use axum::{Extension, Router, routing::get};
     use leptos::prelude::*;
     use leptos_axum::{LeptosRoutes, generate_route_list};
 
@@ -59,6 +63,14 @@ async fn router(env: Env) -> axum::Router {
 
     // build our application with a route
     Router::new()
+        .route(
+            auth::EntraProvider::START_PATH,
+            get(auth::EntraProvider::start),
+        )
+        .route(
+            auth::EntraProvider::CALLBACK_PATH,
+            get(auth::EntraProvider::callback),
+        )
         .leptos_routes(&leptos_options, routes, {
             let leptos_options = leptos_options.clone();
             move || shell(leptos_options.clone())

@@ -19,7 +19,13 @@ hydrate = ["leptos/hydrate"]
 leptos-watch = ["hydrate"]
 ssr = [
     "dep:axum",
+    "dep:base64",
+    "dep:cookie",
+    "dep:futures-util",
+    "dep:getrandom-v02",
     "dep:leptos_axum",
+    "dep:openidconnect",
+    "dep:serde_json",
     "dep:worker",
     "leptos/ssr",
     "leptos-use/ssr",
@@ -29,10 +35,41 @@ ssr = [
 [dependencies.axum]
 version = "0.8"
 default-features = false
+features = ["query"]
+optional = true
+
+[dependencies.base64]
+version = "0.23"
+optional = true
+
+[dependencies.cookie]
+version = "0.18"
+features = ["private"]
+optional = true
+
+[dependencies.futures-util]
+version = "0.3"
+optional = true
+
+[dependencies.openidconnect]
+version = "4.1"
+default-features = false
+features = ["timing-resistant-secret-traits"]
+optional = true
+
+[dependencies.serde_json]
+version = "1"
 optional = true
 
 [dependencies.console_error_panic_hook]
 version = "0.1"
+
+# openidconnect and cookie use rand 0.8, which needs getrandom 0.2
+[dependencies.getrandom-v02]
+package = "getrandom"
+version = "0.2"
+features = ["js"]
+optional = true
 
 # need to enable the wasm_js feature for some things downstream
 [dependencies.getrandom-v03]
@@ -46,7 +83,7 @@ version = "0.4"
 features = ["wasm_js"]
 
 [dependencies.jiff]
-version = "0.2"
+version = "1"
 features = ["js", "serde"]
 
 [dependencies.leptos]

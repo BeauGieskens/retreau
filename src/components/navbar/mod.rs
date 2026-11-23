@@ -2,7 +2,11 @@ use leptos::prelude::*;
 use leptos_router::components::A;
 use stylance::{classes, import_style};
 
-import_style!(style, "style.module.scss");
+import_style!(
+    #[expect(unused)]
+    style,
+    "style.module.scss"
+);
 
 #[component]
 pub fn Navbar() -> impl IntoView {
@@ -20,7 +24,9 @@ pub fn Navbar() -> impl IntoView {
                 </A>
             </div>
             <div class=style::right>
-                <button class=style::avatar></button>
+                <A href="/login" {..} class=style::link>
+                    Sign In
+                </A>
             </div>
         </nav>
     }
